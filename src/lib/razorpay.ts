@@ -1,9 +1,15 @@
 import Razorpay from 'razorpay';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+function getRazorpayInstance() {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error('Razorpay credentials not found in environment variables');
+  }
+  
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 export interface PaymentData {
   amount: number;
@@ -23,6 +29,7 @@ export interface PaymentResponse {
 
 export async function createPaymentOrder(data: PaymentData) {
   try {
+    const razorpay = getRazorpayInstance();
     const order = await razorpay.orders.create({
       amount: data.amount * 100, // Razorpay expects amount in paise
       currency: data.currency,
@@ -58,6 +65,7 @@ export async function verifyPayment(paymentId: string, orderId: string, signatur
 
 export async function getPaymentDetails(paymentId: string) {
   try {
+    const razorpay = getRazorpayInstance();
     const payment = await razorpay.payments.fetch(paymentId);
     return { success: true, payment };
   } catch (error) {
