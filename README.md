@@ -1,194 +1,196 @@
 # EduMettle Website
 
-A modern, responsive website for EduMettle - Live Interactive Training Platform for Data Science, Machine Learning, DSA, DevOps & Web Development.
+A modern, responsive website for EduMettle - an educational platform offering AI Fluency courses.
 
-## 🚀 Features
+## Features
 
-- **Modern Design**: Clean, professional design with beautiful UI/UX
-- **Responsive Layout**: Fully responsive across all devices
-- **Live Course Focus**: Emphasis on live, interactive learning
-- **Course Registration**: Complete registration flow with course selection
-- **Contact Integration**: WhatsApp and email integration for easy communication
-- **SEO Optimized**: Built with Next.js for optimal performance and SEO
+- **Responsive Design**: Mobile-first approach with dark/light mode support
+- **Course Management**: Dynamic course information with pricing and scheduling
+- **Payment Integration**: Razorpay payment gateway integration
+- **Email Notifications**: Automated email confirmations via Zoho Mail
+- **PDF Receipts**: Automated PDF receipt generation
+- **Google Sheets Integration**: Form data storage and management
+- **Contact Forms**: User-friendly contact and registration forms
+- **SEO Optimized**: Meta tags, favicons, and structured data
 
-## 📱 Pages
+## Tech Stack
 
-- **Home Page**: Hero section, about, featured courses, testimonials, partner logos
-- **Courses Page**: Featured AI Fluency course and upcoming tracks
-- **About Us Page**: Company story, mission, team profiles
-- **Contact Page**: Contact form, FAQ, office hours
-- **Registration Page**: Course selection and registration form
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 14 with TypeScript
-- **Styling**: Tailwind CSS
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS with custom theme
+- **Payment**: Razorpay integration
+- **Email**: Nodemailer with Zoho SMTP
+- **Data Storage**: Google Sheets API
+- **PDF Generation**: PDF-lib
 - **Icons**: React Icons
-- **Images**: Next.js Image optimization with Unsplash integration
-- **Responsive Design**: Mobile-first approach
 
-## 🎨 Design Features
-
-- **Color Scheme**: Professional blue and green palette
-- **Typography**: Inter font for modern, clean text
-- **Components**: Reusable components for consistency
-- **Animations**: Smooth transitions and hover effects
-- **Accessibility**: Semantic HTML and proper contrast ratios
-
-## 🚦 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18.0 or later
-- npm or yarn package manager
+- Node.js 18+ 
+- npm or yarn
+- Google Cloud Console project (for Sheets API)
+- Razorpay account
+- Zoho Mail account
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd edumettle_website
-   ```
+1. Clone the repository:
+```bash
+git clone https://github.com/edumettle/edumettle.com.git
+cd edumettle.com
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+2. Install dependencies:
+```bash
+npm install
+```
 
-3. **Run the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+3. Create environment variables file:
+```bash
+cp .env.example .env.local
+```
 
-4. **Open in browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+4. Configure environment variables in `.env.local`:
+```env
+# Google Sheets API
+GSHEET_SPREADSHEET_ID=your_spreadsheet_id
+GSHEET_CLIENT_EMAIL=your_service_account_email
+GSHEET_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GSHEET_SHEET_CONTACT=Contact
+GSHEET_SHEET_REGISTRATION=Registration
 
-### Build for Production
+# Razorpay
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
 
+# Zoho Mail
+ZOHO_EMAIL=your_zoho_email
+ZOHO_PASSWORD=your_zoho_app_password
+```
+
+### Development
+
+Run the development server:
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production Build
+
+Build for production:
 ```bash
 npm run build
-npm run start
 ```
 
-## 📞 Contact Information
-
-- **WhatsApp**: +91 7848843524
-- **Email**: hello@edumettle.com
-- **Website**: [EduMettle.com](https://edumettle.com)
-
-## 🎯 Key Sections
-
-### Home Page
-- Hero section with compelling headline
-- About EduMettle overview
-- Featured courses grid
-- Why choose EduMettle benefits
-- Student testimonials
-- Partner certification logos
-- Call-to-action sections
-
-### Courses Page
-- Featured AI Fluency course (available now)
-- Upcoming courses for 2026
-- Detailed course information
-- Pricing and enrollment
-
-### About Page
-- Company story and mission
-- Team member profiles
-- Company values
-- Success statistics
-
-### Contact Page
-- Multi-channel contact options
-- Contact form with validation
-- FAQ section
-- Office hours
-
-### Registration Page
-- Course selection interface
-- Student information form
-- Course details sidebar
-- Payment integration ready
-
-## 🔧 Customization
-
-### Colors
-Update colors in `tailwind.config.js`:
-```javascript
-colors: {
-  primary: { /* Blue shades */ },
-  secondary: { /* Green shades */ }
-}
+Start production server:
+```bash
+npm start
 ```
 
-### Content
-- Update course information in respective page components
-- Modify team member details in About page
-- Update contact information throughout the site
+## Project Structure
 
-### Images
-- All images are sourced from Unsplash
-- Replace with actual company photos as needed
-- Optimize images for web performance
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   ├── contact/       # Contact form handler
+│   │   ├── registration/  # Registration handler
+│   │   ├── payment/       # Payment verification
+│   │   ├── generate-receipt/ # PDF receipt generation
+│   │   └── send-confirmation-email/ # Email notifications
+│   ├── courses/           # Courses page
+│   ├── about/             # About page
+│   ├── contact/           # Contact page
+│   ├── registration/      # Registration page
+│   ├── success/           # Payment success page
+│   ├── privacy/           # Privacy policy
+│   ├── terms/             # Terms of service
+│   ├── cancellation-refund/ # Cancellation policy
+│   ├── shipping/          # Shipping policy
+│   └── layout.tsx         # Root layout
+├── components/            # Reusable components
+│   ├── Header.tsx         # Navigation header
+│   ├── Footer.tsx         # Site footer
+│   ├── Hero.tsx           # Hero section
+│   ├── CourseCard.tsx     # Course display card
+│   ├── TestimonialCard.tsx # Testimonial card
+│   ├── Notification.tsx   # Toast notifications
+│   └── ThemeProvider.tsx  # Theme context
+├── lib/                   # Utility libraries
+│   ├── googleSheets.ts    # Google Sheets integration
+│   └── razorpay.ts        # Razorpay integration
+└── styles/                # Global styles
+    └── globals.css        # Tailwind CSS imports
+```
 
-## 📈 Performance
+## API Endpoints
 
-- Next.js Image optimization
-- Tailwind CSS purging for minimal bundle size
-- Component-based architecture for code splitting
-- SEO-friendly meta tags and structure
+- `POST /api/contact` - Handle contact form submissions
+- `POST /api/registration` - Handle course registrations
+- `POST /api/payment/verify` - Verify Razorpay payments
+- `POST /api/generate-receipt` - Generate PDF receipts
+- `POST /api/send-confirmation-email` - Send confirmation emails
 
-## 🔒 Security
+## Environment Variables
 
-- Form validation on client and server side
-- Secure contact form handling
-- Safe external link handling
-- Input sanitization
+### Required Variables
 
-## 📱 Mobile Experience
+- `GSHEET_SPREADSHEET_ID`: Google Sheets spreadsheet ID
+- `GSHEET_CLIENT_EMAIL`: Google service account email
+- `GSHEET_PRIVATE_KEY`: Google service account private key
+- `RAZORPAY_KEY_ID`: Razorpay API key ID
+- `RAZORPAY_KEY_SECRET`: Razorpay API key secret
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`: Public Razorpay key ID
+- `ZOHO_EMAIL`: Zoho email address
+- `ZOHO_PASSWORD`: Zoho app password
 
-- Touch-friendly navigation
-- Optimized forms for mobile input
-- Responsive images and layouts
-- Fast loading on mobile networks
+### Optional Variables
 
-## 🎓 Course Information
+- `GSHEET_SHEET_CONTACT`: Contact sheet name (default: "Contact")
+- `GSHEET_SHEET_REGISTRATION`: Registration sheet name (default: "Registration")
 
-### Currently Available
-- **AI Fluency**: 1-month live course focusing on AI tools and workflows
+## Deployment
 
-### Coming in 2026
-- Data Science (6 months)
-- Machine Learning (4 months)
-- DSA - Data Structures & Algorithms (3 months)
-- DevOps (4 months)
-- Web Development (5 months)
+### Vercel (Recommended)
 
-## 📊 Analytics Ready
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-The site is prepared for analytics integration:
-- Google Analytics
-- Facebook Pixel
-- Conversion tracking
-- User behavior analysis
+### Other Platforms
 
-## 🤝 Contributing
+The application can be deployed to any platform that supports Next.js:
+- Netlify
+- AWS Amplify
+- Railway
+- DigitalOcean App Platform
+
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Commit changes: `git commit -am 'Add new feature'`
+4. Push to branch: `git push origin feature/new-feature`
 5. Submit a pull request
 
-## 📄 License
+## License
 
-This project is proprietary to EduMettle. All rights reserved.
+This project is proprietary software owned by EduMettle.
 
----
+## Support
 
-Built with ❤️ by the EduMettle team
+For support, email hello@edumettle.com or call +91 7848843524.
+
+## Changelog
+
+### v1.0.0 (January 2025)
+- Initial release
+- Complete website with all features
+- Payment integration
+- Email notifications
+- PDF receipt generation
+- Google Sheets integration

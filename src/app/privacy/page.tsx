@@ -57,8 +57,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Information Sharing</h2>
-                <p className="text-gray-600 leading-relaxed">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Information Sharing</h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   We do not sell, trade, or otherwise transfer your personal information to third parties 
                   without your consent, except as described in this policy. We may share your information:
                 </p>
@@ -70,8 +70,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Security</h2>
-                <p className="text-gray-600 leading-relaxed">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Data Security</h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   We implement appropriate security measures to protect your personal information against 
                   unauthorized access, alteration, disclosure, or destruction. However, no method of 
                   transmission over the internet is 100% secure.
@@ -79,8 +79,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Rights</h2>
-                <p className="text-gray-600 leading-relaxed">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Your Rights</h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   You have the right to:
                 </p>
                 <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 mt-4">
@@ -92,8 +92,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
-                <p className="text-gray-600 leading-relaxed">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contact Us</h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   If you have any questions about this Privacy Policy, please contact us at:
                 </p>
                 <div className="bg-gray-50 dark:bg-gray-800 dark:shadow-white/20 p-6 rounded-lg mt-4">

@@ -1,124 +1,246 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCanvas, registerFont } from 'canvas';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 export async function POST(request: NextRequest) {
   try {
-    const { paymentId, orderId, amount, currency, timestamp } = await request.json();
+    const { name, email, phone, paymentId, orderId, amount, currency, timestamp } = await request.json();
 
-    // Create a simple PDF-like receipt using canvas
-    const canvas = createCanvas(400, 600);
-    const ctx = canvas.getContext('2d');
+    // Create a new PDF document
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([400, 600]);
 
-    // Set background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 400, 600);
+    // Get fonts
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Company header with logo area
-    ctx.fillStyle = '#8b5cf6'; // Primary purple
-    ctx.fillRect(0, 0, 400, 80);
-    
-    // Company name
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 24px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('EduMettle', 200, 35);
-    
-    // Tagline
-    ctx.font = '12px Arial';
-    ctx.fillText('Empowering Your Learning Journey', 200, 55);
+    // Set up colors
+    const primaryColor = rgb(0.545, 0.361, 0.969); // #8b5cf6
+    const textColor = rgb(0.122, 0.161, 0.216); // #1f2937
+    const grayColor = rgb(0.420, 0.455, 0.502); // #6b7280
+    const lightGrayColor = rgb(0.898, 0.910, 0.922); // #e5e7eb
+
+    // Header background
+    page.drawRectangle({
+      x: 0,
+      y: 520,
+      width: 400,
+      height: 80,
+      color: primaryColor,
+    });
+
+    // Company name in header
+    page.drawText('EduMettle', {
+      x: 200 - (font.widthOfTextAtSize('EduMettle', 24) / 2),
+      y: 550,
+      size: 24,
+      font: boldFont,
+      color: rgb(1, 1, 1), // White
+    });
+
+    // Tagline in header
+    page.drawText('Empowering Your Learning Journey', {
+      x: 200 - (font.widthOfTextAtSize('Empowering Your Learning Journey', 12) / 2),
+      y: 530,
+      size: 12,
+      font: font,
+      color: rgb(1, 1, 1), // White
+    });
 
     // Receipt title
-    ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText('PAYMENT RECEIPT', 200, 120);
+    page.drawText('PAYMENT RECEIPT', {
+      x: 200 - (boldFont.widthOfTextAtSize('PAYMENT RECEIPT', 20) / 2),
+      y: 480,
+      size: 20,
+      font: boldFont,
+      color: textColor,
+    });
 
-    // Receipt details
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
-    
-    const details = [
-      { label: 'Receipt No:', value: paymentId },
-      { label: 'Order ID:', value: orderId },
-      { label: 'Date:', value: new Date(timestamp).toLocaleDateString() },
-      { label: 'Time:', value: new Date(timestamp).toLocaleTimeString() },
-      { label: 'Course:', value: 'AI Fluency' },
-      { label: 'Amount:', value: `₹${amount}` },
-      { label: 'Status:', value: 'PAID' },
+    // Customer Information Section
+    page.drawText('CUSTOMER INFORMATION', {
+      x: 50,
+      y: 440,
+      size: 14,
+      font: boldFont,
+      color: textColor,
+    });
+
+    // Customer details
+    const customerDetails = [
+      { label: 'Name:', value: name || 'N/A' },
+      { label: 'Email:', value: email || 'N/A' },
+      { label: 'Phone:', value: phone || 'N/A' },
     ];
 
-    let yPos = 160;
-    details.forEach((detail, index) => {
-      ctx.fillStyle = '#6b7280';
-      ctx.fillText(detail.label, 50, yPos);
-      ctx.fillStyle = '#1f2937';
-      ctx.fillText(detail.value, 200, yPos);
-      yPos += 25;
+    let yPos = 410;
+    customerDetails.forEach((detail) => {
+      page.drawText(detail.label, {
+        x: 50,
+        y: yPos,
+        size: 12,
+        font: font,
+        color: grayColor,
+      });
+      
+      page.drawText(detail.value, {
+        x: 150,
+        y: yPos,
+        size: 12,
+        font: font,
+        color: textColor,
+      });
+      yPos -= 20;
     });
 
     // Separator line
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(50, yPos + 10);
-    ctx.lineTo(350, yPos + 10);
-    ctx.stroke();
+    page.drawLine({
+      start: { x: 50, y: yPos - 10 },
+      end: { x: 350, y: yPos - 10 },
+      thickness: 1,
+      color: lightGrayColor,
+    });
+
+    // Payment Information Section
+    yPos -= 30;
+    page.drawText('PAYMENT INFORMATION', {
+      x: 50,
+      y: yPos,
+      size: 14,
+      font: boldFont,
+      color: textColor,
+    });
+
+    // Payment details
+    const paymentDetails = [
+      { label: 'Payment ID:', value: paymentId || 'N/A' },
+      { label: 'Order ID:', value: orderId || 'N/A' },
+      { label: 'Date:', value: new Date(timestamp).toLocaleDateString() },
+      { label: 'Time:', value: new Date(timestamp).toLocaleTimeString() },
+      { label: 'Course:', value: 'AI Fluency' },
+      { label: 'Amount:', value: `Rs. ${amount}` },
+      { label: 'Status:', value: 'PAID' },
+    ];
+
+    yPos -= 20;
+    paymentDetails.forEach((detail) => {
+      page.drawText(detail.label, {
+        x: 50,
+        y: yPos,
+        size: 12,
+        font: font,
+        color: grayColor,
+      });
+      
+      page.drawText(detail.value, {
+        x: 200,
+        y: yPos,
+        size: 12,
+        font: font,
+        color: textColor,
+      });
+      yPos -= 20;
+    });
+
+    // Separator line
+    page.drawLine({
+      start: { x: 50, y: yPos - 10 },
+      end: { x: 350, y: yPos - 10 },
+      thickness: 1,
+      color: lightGrayColor,
+    });
 
     // Thank you message
-    yPos += 40;
-    ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Thank You for Your Payment!', 200, yPos);
+    yPos -= 30;
+    page.drawText('Thank You for Your Payment!', {
+      x: 200 - (boldFont.widthOfTextAtSize('Thank You for Your Payment!', 16) / 2),
+      y: yPos,
+      size: 16,
+      font: boldFont,
+      color: textColor,
+    });
 
-    yPos += 30;
-    ctx.font = '12px Arial';
-    ctx.fillStyle = '#6b7280';
-    ctx.fillText('Your registration has been confirmed.', 200, yPos);
-    yPos += 20;
-    ctx.fillText('Welcome to EduMettle!', 200, yPos);
+    yPos -= 25;
+    page.drawText('Your registration has been confirmed.', {
+      x: 200 - (font.widthOfTextAtSize('Your registration has been confirmed.', 12) / 2),
+      y: yPos,
+      size: 12,
+      font: font,
+      color: grayColor,
+    });
 
-    // Contact info
-    yPos += 40;
-    ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 14px Arial';
-    ctx.fillText('Contact Information', 200, yPos);
-    
-    yPos += 25;
-    ctx.font = '12px Arial';
-    ctx.fillStyle = '#6b7280';
-    ctx.fillText('Email: hello@edumettle.com', 200, yPos);
-    yPos += 20;
-    ctx.fillText('Phone: +91 7848843524', 200, yPos);
-    yPos += 20;
-    ctx.fillText('Website: www.edumettle.com', 200, yPos);
+    yPos -= 20;
+    page.drawText('Welcome to EduMettle!', {
+      x: 200 - (font.widthOfTextAtSize('Welcome to EduMettle!', 12) / 2),
+      y: yPos,
+      size: 12,
+      font: font,
+      color: grayColor,
+    });
 
-    // Footer
-    yPos += 30;
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(50, yPos);
-    ctx.lineTo(350, yPos);
-    ctx.stroke();
+    // Contact Information
+    yPos -= 40;
+    page.drawText('Contact Information', {
+      x: 200 - (boldFont.widthOfTextAtSize('Contact Information', 14) / 2),
+      y: yPos,
+      size: 14,
+      font: boldFont,
+      color: textColor,
+    });
 
-    yPos += 20;
-    ctx.font = '10px Arial';
-    ctx.fillStyle = '#9ca3af';
-    ctx.fillText('This is a computer-generated receipt.', 200, yPos);
-    yPos += 15;
-    ctx.fillText('No signature required.', 200, yPos);
+    const contactInfo = [
+      'Email: hello@edumettle.com',
+      'Phone: +91 7848843524',
+      'Website: www.edumettle.com',
+      'Location: Rourkela, Odisha, India',
+    ];
 
-    // Convert canvas to buffer
-    const buffer = canvas.toBuffer('image/png');
+    yPos -= 20;
+    contactInfo.forEach((info) => {
+      page.drawText(info, {
+        x: 200 - (font.widthOfTextAtSize(info, 12) / 2),
+        y: yPos,
+        size: 12,
+        font: font,
+        color: grayColor,
+      });
+      yPos -= 18;
+    });
 
-    // Create a simple PDF-like response (in a real implementation, you'd use a proper PDF library)
-    // For now, we'll return the PNG image
-    return new NextResponse(buffer, {
+    // Footer separator
+    page.drawLine({
+      start: { x: 50, y: yPos - 10 },
+      end: { x: 350, y: yPos - 10 },
+      thickness: 1,
+      color: lightGrayColor,
+    });
+
+    // Footer text
+    yPos -= 20;
+    page.drawText('This is a computer-generated receipt.', {
+      x: 200 - (font.widthOfTextAtSize('This is a computer-generated receipt.', 10) / 2),
+      y: yPos,
+      size: 10,
+      font: font,
+      color: rgb(0.612, 0.639, 0.686), // #9ca3af
+    });
+
+    yPos -= 15;
+    page.drawText('No signature required.', {
+      x: 200 - (font.widthOfTextAtSize('No signature required.', 10) / 2),
+      y: yPos,
+      size: 10,
+      font: font,
+      color: rgb(0.612, 0.639, 0.686), // #9ca3af
+    });
+
+    // Generate PDF bytes
+    const pdfBytes = await pdfDoc.save();
+
+    // Return the PDF
+    return new NextResponse(pdfBytes as any, {
       headers: {
-        'Content-Type': 'image/png',
-        'Content-Disposition': `attachment; filename="EduMettle-Receipt-${paymentId}.png"`,
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="EduMettle-Receipt-${paymentId}.pdf"`,
+        'Content-Length': pdfBytes.length.toString(),
       },
     });
 

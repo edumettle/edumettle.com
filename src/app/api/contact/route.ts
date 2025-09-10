@@ -29,13 +29,12 @@ export async function POST(request: NextRequest) {
 
     if (result.success) {
       // Send email copy to user
-      try {
-        await sendContactFormCopy(name, email, phone, message);
-        console.log('Contact form email sent successfully to:', email);
-      } catch (emailError) {
-        console.error('Failed to send contact form copy:', emailError);
-        // Don't fail the entire request if email fails
-      }
+        try {
+          await sendContactFormCopy(name, email, phone, message);
+        } catch (emailError) {
+          console.error('Failed to send contact form copy:', emailError);
+          // Don't fail the entire request if email fails
+        }
 
       return NextResponse.json(
         { success: true, message: 'Contact form submitted successfully' },
@@ -102,24 +101,25 @@ async function sendContactFormCopy(name: string, email: string, phone: string, m
           .header {
               background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
               color: white;
-              padding: 40px 30px;
+              padding: 0;
               text-align: center;
               position: relative;
+              min-height: 200px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
           }
-          .logo-text {
-              font-size: 32px;
-              font-weight: bold;
-              color: white;
-              margin-bottom: 8px;
-              text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          }
-          .tagline {
-              font-size: 14px;
-              opacity: 0.9;
-              color: white;
+          .logo {
+              width: 100%;
+              max-width: 400px;
+              height: auto;
+              object-fit: contain;
+              display: block;
+              margin: 0 auto;
           }
           .content {
               padding: 40px 30px;
+              text-align: center;
           }
           .greeting {
               font-size: 24px;
@@ -143,6 +143,7 @@ async function sendContactFormCopy(name: string, email: string, phone: string, m
               margin-bottom: 15px;
               padding-bottom: 10px;
               border-bottom: 1px solid #e2e8f0;
+              text-align: left;
           }
           .detail-row:last-child {
               border-bottom: none;
@@ -193,8 +194,7 @@ async function sendContactFormCopy(name: string, email: string, phone: string, m
   <body>
       <div class="container">
           <div class="header">
-              <div class="logo-text">EduMettle</div>
-              <div class="tagline">Empowering Your Learning Journey</div>
+              <img src="https://raw.githubusercontent.com/edumettle/edumettle.com/refs/heads/main/public/logo%2B%20whitetext_transparent_background.png" alt="EduMettle Logo" class="logo" />
           </div>
           
           <div class="content">

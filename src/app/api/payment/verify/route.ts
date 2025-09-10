@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const updateResult = await updateRegistrationPayment(
       orderId,
       paymentId,
-      paymentDetails.payment.status
+      paymentDetails.payment?.status || 'unknown'
     );
 
     if (!updateResult.success) {

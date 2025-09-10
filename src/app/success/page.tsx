@@ -16,15 +16,27 @@ export default function SuccessPage() {
     // Get payment data from URL params or localStorage
     const paymentId = searchParams.get('payment_id')
     const orderId = searchParams.get('order_id')
+    const customerParam = searchParams.get('customer')
     
     if (paymentId && orderId) {
+      // Parse customer information
+      let customerInfo = null
+      if (customerParam) {
+        try {
+          customerInfo = JSON.parse(decodeURIComponent(customerParam))
+        } catch (error) {
+          console.error('Error parsing customer info:', error)
+        }
+      }
+      
       // Store payment data for receipt generation
       const data = {
         paymentId,
         orderId,
         timestamp: new Date().toISOString(),
         amount: searchParams.get('amount') || '1000',
-        currency: searchParams.get('currency') || 'INR'
+        currency: searchParams.get('currency') || 'INR',
+        ...customerInfo // Include customer information
       }
       setPaymentData(data)
       localStorage.setItem('paymentData', JSON.stringify(data))
@@ -101,29 +113,36 @@ export default function SuccessPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
-                    <FaCheckCircle className="text-green-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Payment Status: <strong className="text-green-600">Completed</strong></span>
+                    <FaUser className="text-primary-500" />
+                    <span className="text-gray-600 dark:text-gray-300">Name: <strong>{paymentData?.name || 'N/A'}</strong></span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <FaEnvelope className="text-primary-500" />
+                    <span className="text-gray-600 dark:text-gray-300">Email: <strong>{paymentData?.email || 'N/A'}</strong></span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-gray-600 dark:text-gray-300">Phone: <strong>{paymentData?.phone || 'N/A'}</strong></span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <FaBook className="text-primary-500" />
                     <span className="text-gray-600 dark:text-gray-300">Course: <strong>AI Fluency</strong></span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <FaCalendar className="text-primary-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Next Batch: <strong>January 15, 2025</strong></span>
-                  </div>
                 </div>
                 
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
+                    <FaCheckCircle className="text-green-500" />
+                    <span className="text-gray-600 dark:text-gray-300">Payment Status: <strong className="text-green-600">Completed</strong></span>
+                  </div>
+                  <div className="flex items-center space-x-3">
                     <span className="text-gray-600 dark:text-gray-300">Payment ID: <strong className="text-sm font-mono">{paymentData?.paymentId || 'N/A'}</strong></span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-gray-600 dark:text-gray-300">Amount: <strong>₹1,000</strong></span>
+                    <span className="text-gray-600 dark:text-gray-300">Amount: <strong>Rs. {paymentData?.amount || '1,000'}</strong></span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <FaEnvelope className="text-primary-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Confirmation: <strong>Sent to your email</strong></span>
+                    <FaCalendar className="text-primary-500" />
+                    <span className="text-gray-600 dark:text-gray-300">Next Batch: <strong>January 15, 2025</strong></span>
                   </div>
                 </div>
               </div>

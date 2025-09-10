@@ -1,7 +1,7 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
-import { FaLinkedin, FaTwitter, FaGithub, FaEnvelope, FaInstagram, FaYoutube, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaLinkedin, FaEnvelope, FaInstagram, FaYoutube, FaMapMarkerAlt } from 'react-icons/fa'
 
 export default function AboutPage() {
   const teamMembers = [
@@ -198,26 +198,6 @@ export default function AboutPage() {
                         rel="noopener noreferrer"
                       >
                         <FaLinkedin size={20} />
-                      </a>
-                    )}
-                    {member.twitter && (
-                      <a 
-                        href={member.twitter}
-                        className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaTwitter size={20} />
-                      </a>
-                    )}
-                    {member.github && (
-                      <a 
-                        href={member.github}
-                        className="text-gray-400 hover:text-gray-900 transition-colors duration-200"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaGithub size={20} />
                       </a>
                     )}
                     {member.email && (

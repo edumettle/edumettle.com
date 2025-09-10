@@ -26,6 +26,21 @@ export default function RegistrationPage() {
   const [formErrors, setFormErrors] = useState<{[key: string]: string}>({})
   const { notification, showNotification, hideNotification } = useNotification()
 
+  // Function to get next Monday
+  const getNextMonday = () => {
+    const today = new Date()
+    const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7 // If Sunday, next day is Monday (1), otherwise calculate days until next Monday
+    const nextMonday = new Date(today)
+    nextMonday.setDate(today.getDate() + daysUntilMonday)
+    return nextMonday.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
+  }
+
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -46,8 +61,8 @@ export default function RegistrationPage() {
       discount: '83% OFF',
       duration: '1 Month',
       format: 'Live Online',
-      batchSize: '15-20 Students',
-      nextBatch: 'January 15, 2025',
+      batchSize: '10-12 Students',
+      nextBatch: getNextMonday(),
       timing: 'Weekends: 10 AM - 1 PM IST',
       instructor: 'Abhisek Ganguly',
       available: true,
@@ -216,7 +231,14 @@ export default function RegistrationPage() {
                 }
 
                 // Redirect to success page
-                window.location.href = `/success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&amount=1000&currency=INR`;
+                // Encode customer information for the success page
+                const customerInfo = encodeURIComponent(JSON.stringify({
+                  name: formData.name,
+                  email: formData.email,
+                  phone: formData.phone
+                }));
+                
+                window.location.href = `/success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&amount=1000&currency=INR&customer=${customerInfo}`;
               } else {
                 showNotification('Payment verification failed. Please contact support.', 'error');
               }
