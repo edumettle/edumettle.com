@@ -32,6 +32,17 @@ export interface RegistrationFormData {
   timestamp: string;
 }
 
+export interface EmployeeData {
+  employeeCode: string;
+  name: string;
+  designation: string;
+  employeeId: string;
+  phone: string;
+  address: string;
+  photoFilename: string;
+  dateAdded: string;
+}
+
 export async function addContactToSheet(data: ContactFormData) {
   try {
     const response = await sheets.spreadsheets.values.append({
@@ -123,6 +134,66 @@ export async function updateRegistrationPayment(orderId: string, paymentId: stri
     return { success: true, data: updateResponse.data };
   } catch (error) {
     console.error('Error updating payment status:', error);
+    return { success: false, error: error };
+  }
+}
+
+export async function addEmployeeToSheet(data: EmployeeData) {
+  try {
+    const response = await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GSHEET_SPREADSHEET_ID,
+      range: `${process.env.GSHEET_SHEET_EMPLOYEE || 'employee'}!A:H`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[
+          data.employeeCode,
+          data.name,
+          data.designation,
+          data.employeeId,
+          data.phone,
+          data.address,
+          data.photoFilename,
+          data.dateAdded
+        ]],
+      },
+    });
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error adding employee to sheet:', error);
+    return { success: false, error: error };
+  }
+}
+
+export async function getEmployeeByCode(code: string) {
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: process.env.GSHEET_SPREADSHEET_ID,
+      range: `${process.env.GSHEET_SHEET_EMPLOYEE || 'employee'}!A:H`,
+    });
+
+    const rows = response.data.values || [];
+    
+    // Skip header row and search for employee code
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === code) {
+        const employee: EmployeeData = {
+          employeeCode: rows[i][0],
+          name: rows[i][1],
+          designation: rows[i][2],
+          employeeId: rows[i][3],
+          phone: rows[i][4],
+          address: rows[i][5],
+          photoFilename: rows[i][6],
+          dateAdded: rows[i][7]
+        };
+        return { success: true, data: employee };
+      }
+    }
+
+    return { success: false, error: 'Employee not found' };
+  } catch (error) {
+    console.error('Error fetching employee:', error);
     return { success: false, error: error };
   }
 }
