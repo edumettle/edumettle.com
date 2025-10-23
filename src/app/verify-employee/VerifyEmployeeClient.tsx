@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { FaUser, FaIdCard, FaPhone, FaMapMarkerAlt, FaBriefcase, FaSearch } from 'react-icons/fa';
 
@@ -21,10 +22,20 @@ export default function VerifyEmployeeClient() {
   const [employee, setEmployee] = useState<EmployeeData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const searchParams = useSearchParams();
 
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!code.trim()) {
+  // Auto-verify employee if code is provided in URL
+  useEffect(() => {
+    const urlCode = searchParams.get('code');
+    if (urlCode && urlCode.trim()) {
+      setCode(urlCode.trim());
+      // Automatically verify the employee
+      verifyEmployee(urlCode.trim());
+    }
+  }, [searchParams]);
+
+  const verifyEmployee = async (employeeCode: string) => {
+    if (!employeeCode.trim()) {
       setError('Please enter an employee code');
       return;
     }
@@ -39,7 +50,7 @@ export default function VerifyEmployeeClient() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: code.trim() }),
+        body: JSON.stringify({ code: employeeCode.trim() }),
       });
 
       const data = await response.json();
@@ -54,6 +65,11 @@ export default function VerifyEmployeeClient() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    verifyEmployee(code);
   };
 
   return (
