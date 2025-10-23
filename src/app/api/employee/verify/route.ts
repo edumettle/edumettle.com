@@ -21,10 +21,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Construct photo URL
+    // Construct photo URL using API route
     const employee = {
       ...result.data,
-      photoUrl: `/employee-photos/${result.data?.photoFilename || 'default.jpg'}`
+      photoUrl: `/api/employee-photo/${result.data?.photoFilename || 'default.jpg'}`
     };
 
     return NextResponse.json(
