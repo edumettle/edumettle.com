@@ -9,35 +9,21 @@ const execAsync = promisify(exec);
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
     
-    const employeeCode = formData.get('employeeCode') as string;
-    const name = formData.get('name') as string;
-    const designation = formData.get('designation') as string;
-    const employeeId = formData.get('employeeId') as string;
-    const phone = formData.get('phone') as string;
-    const address = formData.get('address') as string;
-    const photo = formData.get('photo') as File;
+    const { employeeCode, name, designation, employeeId, phone, address, photoData, photoName } = body;
 
     // Validate required fields
-    if (!employeeCode || !name || !designation || !employeeId || !phone || !address || !photo) {
+    if (!employeeCode || !name || !designation || !employeeId || !phone || !address || !photoData || !photoName) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
       );
     }
 
-    // Validate file type
-    if (!photo.type.startsWith('image/')) {
-      return NextResponse.json(
-        { error: 'Photo must be an image file' },
-        { status: 400 }
-      );
-    }
-
     // Sanitize filename
     const sanitizedName = name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-    const fileExtension = photo.name.split('.').pop() || 'jpg';
+    const fileExtension = photoName.split('.').pop() || 'jpg';
     const photoFilename = `${sanitizedName}.${fileExtension}`;
 
     // Create employee photos directory if it doesn't exist
@@ -48,10 +34,10 @@ export async function POST(request: NextRequest) {
       // Directory might already exist, ignore error
     }
 
-    // Save photo to public directory
+    // Save photo to public directory (convert base64 to buffer)
     const photoPath = path.join(photosDir, photoFilename);
-    const photoBuffer = await photo.arrayBuffer();
-    await writeFile(photoPath, Buffer.from(photoBuffer));
+    const photoBuffer = Buffer.from(photoData, 'base64');
+    await writeFile(photoPath, photoBuffer);
 
     // Prepare employee data
     const employeeData: EmployeeData = {
@@ -80,8 +66,8 @@ export async function POST(request: NextRequest) {
       // Add the photo to git
       await execAsync(`git add public/employee-photos/${photoFilename}`);
       
-      // Commit the photo
-      await execAsync(`git commit -m "Add employee photo: ${name}"`);
+      // Commit only the photo file (not other changes)
+      await execAsync(`git commit -m "Add employee photo: ${name}" -- public/employee-photos/${photoFilename}`);
       
       // Push to remote
       await execAsync('git push origin main');
