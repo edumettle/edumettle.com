@@ -36,8 +36,51 @@ export async function POST(request: NextRequest) {
 
     // Save photo to public directory (convert base64 to buffer)
     const photoPath = path.join(photosDir, photoFilename);
-    const photoBuffer = Buffer.from(photoData, 'base64');
-    await writeFile(photoPath, photoBuffer);
+    
+    // Validate base64 data
+    if (!photoData || typeof photoData !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid photo data' },
+        { status: 400 }
+      );
+    }
+
+    // Clean base64 data (remove data URL prefix if present)
+    const cleanBase64 = photoData.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    try {
+      const photoBuffer = Buffer.from(cleanBase64, 'base64');
+      
+      // Validate buffer size (max 5MB)
+      if (photoBuffer.length > 5 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: 'Photo file too large. Maximum size is 5MB.' },
+          { status: 400 }
+        );
+      }
+      
+      // Validate it's actually an image by checking magic bytes
+      const isValidImage = photoBuffer.length > 4 && (
+        photoBuffer[0] === 0xFF && photoBuffer[1] === 0xD8 && photoBuffer[2] === 0xFF || // JPEG
+        photoBuffer[0] === 0x89 && photoBuffer[1] === 0x50 && photoBuffer[2] === 0x4E && photoBuffer[3] === 0x47 || // PNG
+        photoBuffer[0] === 0x47 && photoBuffer[1] === 0x49 && photoBuffer[2] === 0x46 // GIF
+      );
+      
+      if (!isValidImage) {
+        return NextResponse.json(
+          { error: 'Invalid image format. Please upload a valid JPEG, PNG, or GIF image.' },
+          { status: 400 }
+        );
+      }
+      
+      await writeFile(photoPath, photoBuffer);
+    } catch (error) {
+      console.error('Error saving photo:', error);
+      return NextResponse.json(
+        { error: 'Failed to save photo' },
+        { status: 500 }
+      );
+    }
 
     // Prepare employee data
     const employeeData: EmployeeData = {

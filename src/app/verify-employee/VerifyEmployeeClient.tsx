@@ -117,15 +117,14 @@ export default function VerifyEmployeeClient() {
         {employee && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <div className="p-6">
-              <div className="flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-6">
+              <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                 {/* Photo */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 flex justify-center md:justify-start w-full md:w-auto">
                   <div className="relative w-32 h-32 rounded-lg overflow-hidden border-4 border-primary-500">
-                    <Image
+                    <img
                       src={employee.photoUrl}
                       alt={employee.name}
-                      fill
-                      className="object-cover"
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/logo_transparent_background.png';
@@ -135,8 +134,8 @@ export default function VerifyEmployeeClient() {
                 </div>
 
                 {/* Employee Details */}
-                <div className="flex-1 space-y-4">
-                  <div>
+                <div className="flex-1 space-y-4 w-full">
+                  <div className="text-center md:text-left">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                       {employee.name}
                     </h2>
