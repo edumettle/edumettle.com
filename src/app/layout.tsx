@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import '../styles/globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 
@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   description: 'Live, interactive training in Data Science, Machine Learning, DSA, DevOps & Web Development. Learn by doing with industry experts.',
   keywords: 'Data Science, Machine Learning, DSA, DevOps, Web Development, Live Training, Coding Bootcamp',
   authors: [{ name: 'EduMettle' }],
-  viewport: 'width=device-width, initial-scale=1',
   manifest: '/site.webmanifest',
   icons: {
     icon: [
@@ -48,12 +47,17 @@ export const metadata: Metadata = {
       },
     ],
   },
-  themeColor: '#8b5cf6',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'EduMettle',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#8b5cf6',
 }
 
 export default function RootLayout({
@@ -68,10 +72,6 @@ export default function RootLayout({
         <link rel="icon" href="/logo_transparent_background.png" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#8b5cf6" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="EduMettle" />
       </head>
       <body className="antialiased">
         <ThemeProvider>

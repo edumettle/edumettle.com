@@ -211,5 +211,6 @@ public/umme.pdf
 employee-admin.html
 employee-admin-backup.html
 public/employee-admin.html
+qr-generator.html
 
 src/app/api/send-proposal-email
