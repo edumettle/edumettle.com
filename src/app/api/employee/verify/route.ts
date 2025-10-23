@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Construct photo URL
     const employee = {
       ...result.data,
-      photoUrl: `/employee-photos/${result.data.photoFilename}`
+      photoUrl: `/employee-photos/${result.data?.photoFilename || 'default.jpg'}`
     };
 
     return NextResponse.json(
