@@ -1,3 +1,2 @@
-# Ignore changes to public folder to prevent unnecessary deployments
-public/employee-photos/*
-!public/employee-photos/.gitkeep
+# Allow employee photos to be deployed
+# public/employee-photos/* - commented out to allow deployment
