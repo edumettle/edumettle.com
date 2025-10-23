@@ -28,6 +28,7 @@ send-proposal.js
 # Employee admin tool (local only)
 employee-admin.html
 employee-admin-backup.html
+public/employee-admin.html
 
 # TypeScript
 *.tsbuildinfo
@@ -209,5 +210,6 @@ public/umme.pdf
 # Employee admin tool (local only)
 employee-admin.html
 employee-admin-backup.html
+public/employee-admin.html
 
 src/app/api/send-proposal-email

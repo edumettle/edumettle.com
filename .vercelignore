@@ -1,0 +1,3 @@
+# Ignore changes to public folder to prevent unnecessary deployments
+public/employee-photos/*
+!public/employee-photos/.gitkeep
